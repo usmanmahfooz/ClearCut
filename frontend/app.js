@@ -24,6 +24,7 @@
   let sourceHeight = 0;
   let aspectRatio = 1;
   let processedFilename = "";
+  let baseProcessedFilename = "";
   let processedUrl = "";
   let originalOutputUrl = "";
   let showingResult = false;
@@ -64,6 +65,7 @@
   }
   function clearResult() {
     processedFilename = "";
+    baseProcessedFilename = "";
     processedUrl = "";
     originalOutputUrl = "";
     setDownload("", "");
@@ -110,6 +112,7 @@
       const data = await response.json();
       if (!response.ok) throw new Error(data.detail || "Background removal failed.");
       processedFilename = data.filename;
+      baseProcessedFilename = data.filename;
       processedUrl = data.url;
       originalOutputUrl = data.url;
       resultButton.disabled = false;
@@ -141,7 +144,7 @@
       const response = await fetch("/resize-image", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ filename: processedFilename, width, height })
+        body: JSON.stringify({ filename: baseProcessedFilename, width, height })
       });
       const data = await response.json();
       if (!response.ok) throw new Error(data.detail || "Image resizing failed.");
