@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="ClearCut is a self-hosted AI background remover and image resizer. Export transparent PNGs and resize images with custom dimensions.">
+  <meta name="keywords" content="AI background remover, image background remover, transparent PNG, image resizer, RMBG-1.4, ONNX, FastAPI">
+  <meta name="theme-color" content="#172b3a">
+  <title>ClearCut | AI Background Remover & Image Resizer</title>
+  <link rel="stylesheet" href="/style.css">
+  <script defer src="/app.js"></script>
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="/" aria-label="ClearCut home">
+      <span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 40 40"><path d="M8 10 20 3l12 7v20l-12 7L8 30Z" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m8 10 12 7 12-7M20 17v20M14 22l5 5 8-10" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+      <span><strong>ClearCut</strong><small>IMAGE STUDIO</small></span>
+    </a>
+    <div class="engine-status"><span class="status-dot"></span><span>RMBG-1.4 · CPU engine</span></div>
+  </header>
+
+  <main class="page-shell">
+    <section class="intro">
+      <p class="eyebrow">LOCAL AI IMAGE TOOLKIT</p>
+      <h1>Clean cutouts. <em>Clear results.</em></h1>
+      <p class="intro-copy">Remove an image background, compare your result, then resize it to the exact dimensions you need.</p>
+    </section>
+
+    <section class="workspace" aria-label="Background removal workspace">
+      <aside class="controls-panel">
+        <div class="panel-heading"><span class="step-number">01</span><div><h2>Add an image</h2><p>PNG, JPG, JPEG or WEBP</p></div></div>
+        <input id="fileInput" type="file" accept="image/png,image/jpeg,image/webp" hidden>
+        <button id="dropzone" class="dropzone" type="button">
+          <span class="upload-symbol" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 16V4m0 0L7 9m5-5 5 5M5 15v4h14v-4" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+          <strong id="uploadTitle">Choose an image</strong>
+          <span id="uploadSubtitle">or drag and drop it here</span>
+          <span class="dropzone-cta">Browse files</span>
+        </button>
+        <div id="imageMeta" class="image-meta hidden"><span id="fileName"></span><strong id="fileDimensions"></strong><button id="clearImage" type="button" class="text-button">Remove</button></div>
+
+        <div class="rule"></div>
+        <div class="panel-heading"><span class="step-number">02</span><div><h2>Output size</h2><p>Background removal keeps the source dimensions</p></div></div>
+        <label class="checkbox-row"><input id="keepRatio" type="checkbox" checked><span>Lock aspect ratio</span></label>
+        <div class="dimension-grid">
+          <label>Width (px)<input id="widthInput" type="number" min="1" max="12000" value="1200" inputmode="numeric"></label>
+          <label>Height (px)<input id="heightInput" type="number" min="1" max="12000" value="1200" inputmode="numeric"></label>
+        </div>
+        <div class="scale-presets" aria-label="Resize presets">
+          <button type="button" data-scale="25">25%</button>
+          <button type="button" data-scale="50">50%</button>
+          <button type="button" data-scale="75">75%</button>
+          <button type="button" data-scale="100" class="selected">100%</button>
+          <button type="button" data-scale="150">150%</button>
+          <button type="button" data-scale="200">200%</button>
+        </div>
+        <p class="helper-copy">Resizing is optional. Image dimensions change only when you apply a size.</p>
+
+        <button id="removeButton" class="primary-button" type="button" disabled><span class="button-icon">✦</span><span id="removeButtonText">Remove background</span></button>
+        <button id="resizeButton" class="secondary-button" type="button" disabled>Apply resize</button>
+        <p id="statusMessage" class="status-message" role="status">Choose an image to begin.</p>
+      </aside>
+
+      <section class="preview-panel">
+        <div class="preview-topbar"><div><span class="section-kicker">WORKSPACE</span><h2>Image preview</h2></div><div class="preview-actions"><button id="showOriginal" type="button" class="view-button selected">Original</button><button id="showResult" type="button" class="view-button">Result</button></div></div>
+        <div id="previewStage" class="preview-stage checkerboard">
+          <div id="emptyState" class="empty-state"><div class="empty-icon" aria-hidden="true"><svg viewBox="0 0 64 64"><rect x="11" y="9" width="42" height="46" rx="5" fill="none" stroke="currentColor" stroke-width="1.7"/><circle cx="24" cy="23" r="4" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="m15 47 12-12 7 7 6-6 9 11" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></div><h3>Your canvas is ready</h3><p>Choose an image to see it here.</p></div>
+          <img id="previewImage" class="preview-image hidden" alt="Image preview">
+          <div id="processingOverlay" class="processing-overlay hidden"><span class="loader"></span><strong>Removing background</strong><span>Running the local AI model</span></div>
+        </div>
+        <div class="preview-footer"><div><span class="footer-label">CURRENT OUTPUT</span><strong id="outputDescription">No processed image yet</strong></div><a id="downloadButton" class="download-button disabled" href="#" download="clearcut-output.png" aria-disabled="true"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m0 0 5-5m-5 5-5-5M5 17v3h14v-3" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg> Download PNG</a></div>
+      </section>
+    </section>
+
+    <section class="notes-grid">
+      <article><span class="note-index">A</span><div><h3>Preserve the source size</h3><p>Background removal produces a transparent PNG at the source image dimensions. Resizing is a separate action.</p></div></article>
+      <article><span class="note-index">B</span><div><h3>Run on your own server</h3><p>ClearCut uses FastAPI and ONNX Runtime. It can run on CPU hardware without a dedicated GPU.</p></div></article>
+      <article><span class="note-index">C</span><div><h3>Transparent PNG output</h3><p>Download the cutout as a PNG that preserves alpha transparency for use in design and product workflows.</p></div></article>
+    </section>
+    <footer class="site-footer"><span>ClearCut AI Studio</span><span>Self-hosted · CPU inference · Open application code</span></footer>
+  </main>
+</body>
+</html>
