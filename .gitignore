@@ -1,0 +1,11 @@
+venv/
+__pycache__/
+*.pyc
+*.pyo
+outputs/*.png
+!outputs/.gitkeep
+models/*.onnx
+frontend/samples/*.png
+.vscode/
+.idea/
+*.log
