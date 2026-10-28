@@ -1,13 +1,13 @@
 # ClearCut: AI Background Remover and Image Resizer
 
-ClearCut is a self-hostable image editing studio for AI-powered background removal and image resizing. It combines a FastAPI backend, ONNX Runtime CPU inference, and a responsive browser interface.
+ClearCut is a self-hostable AI background remover and image resizer. It combines a FastAPI backend, ONNX Runtime CPU inference, and a responsive browser interface for transparent PNG export and custom image dimensions.
 
 ## Features
 
 - Remove image backgrounds and export transparent PNG files.
 - Preserve the source image dimensions during background removal.
 - Resize images using custom width and height values with Pillow's Lanczos resampling.
-- Compare source and processed images in the studio interface.
+- Switch between original and processed previews before downloading.
 - Run locally or deploy with Docker Compose.
 - Use CPU inference; no dedicated GPU is required.
 
@@ -82,7 +82,7 @@ The Dockerfile downloads the model at build time rather than committing the mode
 
 ## Sample images
 
-Binary sample photographs from the original development archive are not stored in this source repository. The optional built-in sample/preset UI therefore requires those files to be restored in `frontend/samples/`. Core image upload, background removal, and resizing do not depend on the samples.
+The original development archive's photographic demo samples are not included in this repository. The published interface focuses on the core upload, background-removal, preview, download, and resize workflow and does not depend on those optional sample assets.
 
 ## Deployment notes
 
